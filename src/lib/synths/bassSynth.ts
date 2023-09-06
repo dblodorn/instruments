@@ -2,23 +2,20 @@ import * as Tone from 'tone'
 
 export const bassSynth = () => {
   const reverb = new Tone.Reverb({
-    decay: 35,
-    wet: 0.15,
+    decay: 50,
+    wet: 0.5,
   }).toDestination();
-  const vibrato = new Tone.Vibrato("2n", 0.9).toDestination();
-  const vol = new Tone.Volume(1).toDestination();
-  
   const synth = new Tone.MonoSynth({
     oscillator: {
-      type: "sine12"
+      type: "sine"
     },
     envelope: {
-      attack: 0.1,
-      decay: 3,
-      release: 1.5,
+      attack: 0,
+      decay: .9,
+      sustain: 0.85,
+      release: 2,
     },
-    portamento: 0.2,
-  }).connect(vol).connect(vibrato).connect(reverb).toDestination();
+  }).connect(reverb).toDestination();
 
   return synth
 }

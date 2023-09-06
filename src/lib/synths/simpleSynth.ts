@@ -8,8 +8,7 @@ export const simpleSynth = () => {
 
   const delay2 = new Tone.PingPongDelay("16n", .5).toDestination();
   const vibrato = new Tone.Vibrato("4n", 0.8).toDestination();
-  const vol = new Tone.Volume(1).toDestination();
-  
+
   const synth = new Tone.FMSynth({
     harmonicity: 1,
     modulationIndex: 1,
@@ -29,7 +28,7 @@ export const simpleSynth = () => {
     modulation: {
       type: "sine32"
     },
-  }).connect(vol).connect(vibrato).connect(reverb).connect(delay2).toDestination();
+  }).connect(vibrato).connect(reverb).connect(delay2).toDestination();
 
   return synth
 }

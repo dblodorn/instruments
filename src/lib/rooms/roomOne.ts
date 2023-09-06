@@ -1,13 +1,15 @@
 import * as Tone from 'tone'
 import * as Matter from 'matter-js'
-import { wallSynth, simpleSynth, bassSynth } from '../synths'
+import { wallSynth, simpleSynth, bassSynth, metalSynth } from '../synths'
 
-const highNotes = ['D7', 'E7', 'D6', 'A6', 'A#6', 'A#6', 'E#8']
-const lowNotes = ['D2', 'E2', 'C2', 'A2', 'A#3', 'C3', 'D3', 'E#3']
+const highNotes = ['D7', 'E7', 'D6', 'A6', 'A#6', 'A#7', 'E#8']
+const lowNotes = ['D3', 'E3', 'D2', 'A2', 'A#2', 'A#3', 'E#4']
 
 const randomNote = (notes: string[] = highNotes) => {
   return notes[Math.ceil(Math.random() * notes.length) - 1]
 }
+
+const MASTER_VOLUME = -10
 
 export function roomOne() {
   // module aliases
@@ -85,11 +87,13 @@ export function roomOne() {
 
   // add all of the bodies to the world
   Composite.add(engine.world, [leftWall, rightWall, ceiling, centerWall, ground]);
+  
   const vol = new Tone.Volume(-20).toDestination();
   // when bodies collide trigger synth
   const wallASynth = wallSynth({reverbDelay: 20}).connect(vol)
   const synth = simpleSynth().connect(vol)
   const bass = bassSynth().connect(vol)
+  const metal = metalSynth().connect(vol)
 
   const explosion = (engine: Matter.Engine, delta: number) => {
     var timeScale = (1000 / 60) / delta;
@@ -114,10 +118,13 @@ export function roomOne() {
   Events.on(engine, 'beforeUpdate', function(event) {
     /* @ts-ignore */
     const timeScale = (event.delta || (1000 / 60)) / 1000;
-    const py = 300 + 100 * Math.sin(engine.timing.timestamp * 0.002);
+    const py = (h / 2) * Math.sin(engine.timing.timestamp * 0.0005);
+    const px = (w / 2) * Math.sin(engine.timing.timestamp * 0.0005);
 
     Body.setPosition(leftWall, { x: 0 + offset, y: py });
     Body.setPosition(rightWall, { x: w - offset, y: -py + h });
+    Body.setPosition(ground, { x: px + offset, y: h - offset });
+    Body.setPosition(ceiling, { x: -px - offset, y: 0 + offset });
     Body.rotate(centerWall, 1 * Math.PI * timeScale / 2 )
   })
 
@@ -136,16 +143,18 @@ export function roomOne() {
       const pair = pairs[i];
       if (pair.bodyB?.label === 'Ball') {
         synth.triggerAttackRelease(randomNote(), '1n')
-        synth.volume.value = -30
+        synth.volume.value = MASTER_VOLUME
       }
 
       if (pair.bodyA?.label === 'CenterWall') {
         const note = randomNote(lowNotes)
         bass.triggerAttackRelease(note, '8n')
-        bass.volume.value = -20
+        bass.volume.value = MASTER_VOLUME - 5
+        metal.triggerAttackRelease(note, '2n')
+        metal.volume.value = MASTER_VOLUME - 9
       } else if (pair.bodyA?.label === 'Ground') {
         wallASynth.triggerAttackRelease('D4', '1n')
-        wallASynth.volume.value = -40
+        wallASynth.volume.value = MASTER_VOLUME - 8
       }
     }
   });
@@ -161,13 +170,14 @@ export function roomOne() {
 
   let initialized = false
 
+  Runner.run(engine);
+  Render.run(render);
+  Composite.add(engine.world, mouseConstraint);
+
   const initializeApp = () => {
     initialized = true
     Tone.start()
-    
-    Runner.run(engine);
-    Render.run(render);
-    Composite.add(engine.world, mouseConstraint);
+    addCircle()
   }
 
   return {

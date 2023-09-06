@@ -14,7 +14,6 @@ export const wallSynth = ({
     decay: params.reverbDelay,
     wet: 0.75,
   }).toDestination();
-  const vol = new Tone.Volume(1).toDestination();
 
   const synth =  new Tone.FMSynth({
     harmonicity: 5,
@@ -35,7 +34,7 @@ export const wallSynth = ({
     modulation: {
       type: "amsawtooth29"
     },
-  }).connect(vol).connect(delay).connect(reverb).toDestination();
+  }).connect(delay).connect(reverb).toDestination();
 
   return synth
 }
