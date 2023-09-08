@@ -12,7 +12,7 @@ const randomNote = (notes: string[] = highNotes) => {
 
 const MASTER_VOLUME = -10
 
-export function roomOne() {
+export function compositionOne() {
   // module aliases
   let Engine = Matter.Engine,
       Render = Matter.Render,
@@ -79,6 +79,10 @@ export function roomOne() {
   let centerWall = Bodies.rectangle((w / 2) - boundsHeight, h / 2, boundsHeight * 1.5, w / 2, { isStatic: true });
   centerWall.label = 'CenterWall'
 
+  if (w <= 960) {
+    centerWall = Bodies.rectangle((w / 2) - boundsHeight, h / 2, boundsHeight * 1.5, w * .825, { isStatic: true });
+  }
+
   leftWall.render.fillStyle = 'pink'
   ground.render.fillStyle = 'red'
   ceiling.render.fillStyle = 'blue'
@@ -129,10 +133,6 @@ export function roomOne() {
 
     Body.setPosition(centerWall, { x: w / 2, y: h / 2 });
     Body.rotate(centerWall, 1 * Math.PI * timeScale / 2 );
-
-    if (w < 640) {
-      Body
-    }
   })
 
   Events.on(engine, 'afterUpdate', (event) => {

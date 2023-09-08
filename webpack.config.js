@@ -1,6 +1,7 @@
 var path = require('path');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   plugins: [
@@ -8,6 +9,11 @@ module.exports = {
       template: "./index.pug",
     }),
     new MiniCssExtractPlugin(),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'assets' }
+      ]
+    })
   ],
   resolve: {
     // Add `.ts` and `.tsx` as a resolvable extension.
