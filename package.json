@@ -5,11 +5,12 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --mode=production",
-    "dev": "webpack serve --mode=development --open"
+    "dev": "webpack serve --mode=development"
   },
   "author": "Dain Blodorn",
   "license": "GNU",
   "devDependencies": {
+    "@types/lodash": "^4.14.198",
     "@types/matter-js": "^0.19.0",
     "@types/node": "^20.5.6",
     "@types/webpack": "^5.28.2",
@@ -31,6 +32,7 @@
     "wepack-cli": "0.0.1-security"
   },
   "dependencies": {
+    "lodash": "^4.17.21",
     "matter-js": "^0.19.0",
     "popmotion": "^11.0.5",
     "tone": "^14.7.77",

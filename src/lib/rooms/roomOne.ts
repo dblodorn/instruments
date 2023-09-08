@@ -1,6 +1,7 @@
 import * as Tone from 'tone'
 import * as Matter from 'matter-js'
 import { wallSynth, simpleSynth, bassSynth, metalSynth } from '../synths'
+import debounce from 'lodash/debounce'
 
 const highNotes = ['D7', 'E7', 'D6', 'A6', 'A#6', 'A#7', 'E#8']
 const lowNotes = ['D3', 'E3', 'D2', 'A2', 'A#2', 'A#3', 'E#4']
@@ -20,10 +21,9 @@ export function roomOne() {
       Body = Matter.Body,
       Events = Matter.Events,
       Common = Matter.Common,
-      Composite = Matter.Composite;
-
-  const w = window.innerWidth
-  const h = window.innerHeight
+      Composite = Matter.Composite,
+      w = window.innerWidth,
+      h = window.innerHeight;
 
   // create an engine
   let engine = Engine.create();
@@ -118,6 +118,7 @@ export function roomOne() {
   Events.on(engine, 'beforeUpdate', function(event) {
     /* @ts-ignore */
     const timeScale = (event.delta || (1000 / 60)) / 1000;
+
     const py = (h / 2) * Math.sin(engine.timing.timestamp * 0.0005);
     const px = (w / 2) * Math.sin(engine.timing.timestamp * 0.0005);
 
@@ -125,7 +126,13 @@ export function roomOne() {
     Body.setPosition(rightWall, { x: w - offset, y: -py + h });
     Body.setPosition(ground, { x: px + offset, y: h - offset });
     Body.setPosition(ceiling, { x: -px - offset, y: 0 + offset });
-    Body.rotate(centerWall, 1 * Math.PI * timeScale / 2 )
+
+    Body.setPosition(centerWall, { x: w / 2, y: h / 2 });
+    Body.rotate(centerWall, 1 * Math.PI * timeScale / 2 );
+
+    if (w < 640) {
+      Body
+    }
   })
 
   Events.on(engine, 'afterUpdate', (event) => {
@@ -142,19 +149,31 @@ export function roomOne() {
     for (let i = 0, j = pairs.length; i != j; ++i) {
       const pair = pairs[i];
       if (pair.bodyB?.label === 'Ball') {
-        synth.triggerAttackRelease(randomNote(), '1n')
-        synth.volume.value = MASTER_VOLUME
+        try {
+          synth.triggerAttackRelease(randomNote(), '1n')
+          synth.volume.value = MASTER_VOLUME
+        } catch (e) {
+          console.error(e)
+        }
       }
 
       if (pair.bodyA?.label === 'CenterWall') {
-        const note = randomNote(lowNotes)
-        bass.triggerAttackRelease(note, '8n')
-        bass.volume.value = MASTER_VOLUME - 5
-        metal.triggerAttackRelease(note, '2n')
-        metal.volume.value = MASTER_VOLUME - 9
+        try {
+          const note = randomNote(lowNotes)
+          bass.triggerAttackRelease(note, '8n')
+          bass.volume.value = MASTER_VOLUME - 5
+          metal.triggerAttackRelease(note, '2n')
+          metal.volume.value = MASTER_VOLUME - 15
+        } catch (e) {
+          console.error(e)
+        }
       } else if (pair.bodyA?.label === 'Ground') {
-        wallASynth.triggerAttackRelease('D4', '1n')
-        wallASynth.volume.value = MASTER_VOLUME - 8
+        try {
+          wallASynth.triggerAttackRelease('D4', '1n')
+          wallASynth.volume.value = MASTER_VOLUME - 10
+        } catch (e) {
+          console.error(e)
+        }
       }
     }
   });
@@ -179,6 +198,12 @@ export function roomOne() {
     Tone.start()
     addCircle()
   }
+
+  // add window resize event listener that is debounced with lodash debounce to update the w & h variables
+  window.addEventListener('resize', debounce(() => {
+    w = window.innerWidth
+    h = window.innerHeight
+  }, 250))
 
   return {
     addCircle,
