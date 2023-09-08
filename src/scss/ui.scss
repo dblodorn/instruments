@@ -21,4 +21,7 @@
     background-color: pink;
     border: 10px inset red;
   }
+  span {
+    pointer-events: none;
+  }
 }
