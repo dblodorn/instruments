@@ -9,10 +9,22 @@ const {
   addCircle,
 } = compositionOne();
 
-button?.addEventListener('click', () => {
+const clickHandler = () => {
   if (!initialized) {
     initializeApp()
   } else {
     addCircle()
   }
+}
+
+button?.addEventListener('click', () => {
+  clickHandler()
 })
+
+document.body.onkeyup = function(e) {
+  if (e.key == " " ||
+      e.code == "Space"  
+  ) {
+    clickHandler()
+  }
+}
