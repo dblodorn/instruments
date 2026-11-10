@@ -30,4 +30,6 @@ A single-page generative audio toy, the "Windmill falling ball chime". Balls dro
 
 ## Gotchas
 
+- `tone` is pinned to exactly `14.7.77`. With 14.9.17 the AudioContext runs but the piece is completely silent. Don't loosen the version or upgrade Tone without checking that sound still comes out. The engine running is not enough evidence.
+
 - Wall sizes depend on `w`/`h`, so the walls are built in `createWalls()`. The debounced resize handler resizes the renderer, removes the old walls, builds new ones, and carries over the center wall's angle. Any new body whose size depends on the viewport needs to go through the same rebuild.

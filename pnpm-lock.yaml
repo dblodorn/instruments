@@ -15,8 +15,8 @@ importers:
         specifier: ^0.19.0
         version: 0.19.0
       tone:
-        specifier: ^14.7.77
-        version: 14.9.17
+        specifier: 14.7.77
+        version: 14.7.77
     devDependencies:
       '@types/lodash':
         specifier: ^4.14.198
@@ -1792,8 +1792,8 @@ packages:
   token-stream@1.0.0:
     resolution: {integrity: sha512-VSsyNPPW74RpHwR8Fc21uubwHY7wMDeJLys2IX5zJNih+OnAnaifKHo+1LHT7DAdloQ7apeaaWg8l7qnf/TnEg==}
 
-  tone@14.9.17:
-    resolution: {integrity: sha512-+Qb7M4NMua+tb5Z52+MEVmjye0fjJuIFBePx423pqr9E6/lHDqZAG+fUAvo+Ujm48q0s9bVLRAyT1ETJJglNtg==}
+  tone@14.7.77:
+    resolution: {integrity: sha512-tCfK73IkLHyzoKUvGq47gyDyxiKLFvKiVCOobynGgBB9Dl0NkxTM2p+eRJXyCYrjJwy9Y0XCMqD3uOYsYt2Fdg==}
 
   ts-loader@9.6.2:
     resolution: {integrity: sha512-R4iuczmtgxvtuI556s+hTZ6/7Ee03VCAk/l/M8LY1OAsUgB7YydsCxkgq9D9pKRaD7GJqUi2u8fp9zZP/ufjKA==}
@@ -3694,7 +3694,7 @@ snapshots:
 
   token-stream@1.0.0: {}
 
-  tone@14.9.17:
+  tone@14.7.77:
     dependencies:
       standardized-audio-context: 25.3.77
       tslib: 2.9.1
