@@ -5,12 +5,12 @@ const button = document.getElementById('add-body')
 
 const {
   initializeApp,
-  initialized,
+  isInitialized,
   addCircle,
 } = compositionOne();
 
 const clickHandler = () => {
-  if (!initialized) {
+  if (!isInitialized()) {
     initializeApp()
   } else {
     addCircle()

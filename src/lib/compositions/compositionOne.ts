@@ -208,6 +208,6 @@ export function compositionOne() {
   return {
     addCircle,
     initializeApp,
-    initialized,
+    isInitialized: () => initialized,
   }
 }
