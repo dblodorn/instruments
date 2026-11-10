@@ -64,30 +64,34 @@ export function compositionOne() {
     Composite.add(engine.world, circle);
   };
 
-  let ground = Bodies.rectangle(w / 2, h - offset, w, boundsHeight, { isStatic: true });
-  ground.label = 'Ground'
+  // walls are sized from w & h, so they get rebuilt whenever the window resizes
+  const createWalls = () => {
+    const ground = Bodies.rectangle(w / 2, h - offset, w, boundsHeight, { isStatic: true });
+    ground.label = 'Ground'
 
-  let ceiling = Bodies.rectangle(w / 2, 0 + offset, w, boundsHeight + offset, { isStatic: true });
-  ceiling.label = 'Cieling'
+    const ceiling = Bodies.rectangle(w / 2, 0 + offset, w, boundsHeight + offset, { isStatic: true });
+    ceiling.label = 'Cieling'
 
-  let leftWall = Bodies.rectangle(0, h / 2, boundsHeight + offset, h, { isStatic: true });
-  leftWall.label = 'LeftWall'
+    const leftWall = Bodies.rectangle(0, h / 2, boundsHeight + offset, h, { isStatic: true });
+    leftWall.label = 'LeftWall'
 
-  let rightWall = Bodies.rectangle(w + offset, h / 2, boundsHeight + offset, h, { isStatic: true });
-  rightWall.label = 'RightWall'
+    const rightWall = Bodies.rectangle(w + offset, h / 2, boundsHeight + offset, h, { isStatic: true });
+    rightWall.label = 'RightWall'
 
-  let centerWall = Bodies.rectangle((w / 2) - boundsHeight, h / 2, boundsHeight * 1.5, w / 2, { isStatic: true });
-  centerWall.label = 'CenterWall'
+    const centerWallLength = w <= 960 ? w * .825 : w / 2
+    const centerWall = Bodies.rectangle((w / 2) - boundsHeight, h / 2, boundsHeight * 1.5, centerWallLength, { isStatic: true });
+    centerWall.label = 'CenterWall'
 
-  if (w <= 960) {
-    centerWall = Bodies.rectangle((w / 2) - boundsHeight, h / 2, boundsHeight * 1.5, w * .825, { isStatic: true });
+    leftWall.render.fillStyle = 'pink'
+    ground.render.fillStyle = 'red'
+    ceiling.render.fillStyle = 'blue'
+    rightWall.render.fillStyle = 'yellow'
+    centerWall.render.fillStyle = 'beige'
+
+    return { ground, ceiling, leftWall, rightWall, centerWall }
   }
 
-  leftWall.render.fillStyle = 'pink'
-  ground.render.fillStyle = 'red'
-  ceiling.render.fillStyle = 'blue'
-  rightWall.render.fillStyle = 'yellow'
-  centerWall.render.fillStyle = 'beige'
+  let { ground, ceiling, leftWall, rightWall, centerWall } = createWalls()
 
   // add all of the bodies to the world
   Composite.add(engine.world, [leftWall, rightWall, ceiling, centerWall, ground]);
@@ -199,10 +203,22 @@ export function compositionOne() {
     addCircle()
   }
 
-  // add window resize event listener that is debounced with lodash debounce to update the w & h variables
+  // on resize (debounced), resize the canvas and rebuild the walls for the new w & h
   window.addEventListener('resize', debounce(() => {
     w = window.innerWidth
     h = window.innerHeight
+
+    render.options.width = w
+    render.options.height = h
+    render.bounds.max.x = w
+    render.bounds.max.y = h
+    Render.setPixelRatio(render, window.devicePixelRatio)
+
+    const centerAngle = centerWall.angle
+    Composite.remove(engine.world, [leftWall, rightWall, ceiling, centerWall, ground]);
+    ({ ground, ceiling, leftWall, rightWall, centerWall } = createWalls())
+    Body.setAngle(centerWall, centerAngle)
+    Composite.add(engine.world, [leftWall, rightWall, ceiling, centerWall, ground]);
   }, 250))
 
   return {
