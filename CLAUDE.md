@@ -31,4 +31,3 @@ A single-page generative audio toy, the "Windmill falling ball chime". Balls dro
 ## Gotchas
 
 - Wall sizes depend on `w`/`h`, so the walls are built in `createWalls()`. The debounced resize handler resizes the renderer, removes the old walls, builds new ones, and carries over the center wall's angle. Any new body whose size depends on the viewport needs to go through the same rebuild.
-- `popmotion` and `xstate` are dependencies that nothing in the code uses yet.

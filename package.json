@@ -34,8 +34,6 @@
   "dependencies": {
     "lodash": "^4.17.21",
     "matter-js": "^0.19.0",
-    "popmotion": "^11.0.5",
-    "tone": "^14.7.77",
-    "xstate": "^4.38.2"
+    "tone": "^14.7.77"
   }
 }
