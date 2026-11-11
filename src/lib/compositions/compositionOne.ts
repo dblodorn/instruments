@@ -12,6 +12,8 @@ const randomNote = (notes: string[] = highNotes) => {
 
 const MASTER_VOLUME = -10
 
+type Instrument = Tone.FMSynth | Tone.MonoSynth | Tone.MetalSynth
+
 export function compositionOne() {
   // module aliases
   let Engine = Matter.Engine,
@@ -103,11 +105,24 @@ export function compositionOne() {
   const bass = bassSynth().connect(vol)
   const metal = metalSynth().connect(vol)
 
+  // Tone throws if a mono synth is started twice at the same time, which happens when several
+  // collisions land in one physics step, or on every trigger while the audio context is still
+  // suspended (its clock is frozen at 0). Skip those triggers instead of letting them throw.
+  const lastStart = new Map<Instrument, number>()
+  const play = (instrument: Instrument, note: string, duration: string, volume?: number) => {
+    if (Tone.context.state !== 'running') return
+    const time = Tone.now()
+    if (time <= (lastStart.get(instrument) ?? -1)) return
+    lastStart.set(instrument, time)
+    if (volume !== undefined) instrument.volume.value = volume
+    instrument.triggerAttackRelease(note, duration, time)
+  }
+
   const explosion = (engine: Matter.Engine, delta: number) => {
     var timeScale = (1000 / 60) / delta;
     var bodies = Composite.allBodies(engine?.world);
 
-    wallASynth.triggerAttackRelease('G#1', '8n')
+    play(wallASynth, 'G#1', '8n')
 
     for (var i = 0; i < bodies.length; i++) {
       var body = bodies[i];
@@ -153,31 +168,15 @@ export function compositionOne() {
     for (let i = 0, j = pairs.length; i != j; ++i) {
       const pair = pairs[i];
       if (pair.bodyB?.label === 'Ball') {
-        try {
-          synth.triggerAttackRelease(randomNote(), '1n')
-          synth.volume.value = MASTER_VOLUME
-        } catch (e) {
-          console.error(e)
-        }
+        play(synth, randomNote(), '1n', MASTER_VOLUME)
       }
 
       if (pair.bodyA?.label === 'CenterWall') {
-        try {
-          const note = randomNote(lowNotes)
-          bass.triggerAttackRelease(note, '8n')
-          bass.volume.value = MASTER_VOLUME - 5
-          metal.triggerAttackRelease(note, '2n')
-          metal.volume.value = MASTER_VOLUME - 15
-        } catch (e) {
-          console.error(e)
-        }
+        const note = randomNote(lowNotes)
+        play(bass, note, '8n', MASTER_VOLUME - 5)
+        play(metal, note, '2n', MASTER_VOLUME - 15)
       } else if (pair.bodyA?.label === 'Ground') {
-        try {
-          wallASynth.triggerAttackRelease('D4', '1n')
-          wallASynth.volume.value = MASTER_VOLUME - 10
-        } catch (e) {
-          console.error(e)
-        }
+        play(wallASynth, 'D4', '1n', MASTER_VOLUME - 10)
       }
     }
   });

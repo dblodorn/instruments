@@ -27,6 +27,7 @@ A single-page generative audio toy, the "Windmill falling ball chime". Balls dro
 - `beforeUpdate` moves the static walls along sine paths driven by `engine.timing.timestamp` and rotates the center wall.
 - `afterUpdate` triggers an "explosion" every 5s that pushes up non-static bodies below y=500 and plays a low wall-synth note.
 - Levels are set relative to `MASTER_VOLUME`, and each trigger reassigns them.
+- All notes go through `play()`. It skips a trigger while the AudioContext isn't running, and also when that synth was already started at the same `Tone.now()`. Without this, Tone throws "Start time must be strictly greater than previous start time" when several collisions land in one physics step, or on every trigger before the first click.
 
 ## Gotchas
 
